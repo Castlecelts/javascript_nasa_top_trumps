@@ -10,7 +10,7 @@ const Deck = function () {
 }
 
 Deck.prototype.getDeal = function () {
-  const request = new RequestHelper(`${this.url}/api/exoplanets`);
+  const request = new RequestHelper(`${this.url}api/exoplanets`);
   request.get()
   .then((nPlanetData) =>{
     this.deck = nPlanetData;
