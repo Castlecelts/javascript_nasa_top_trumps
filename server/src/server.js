@@ -4,6 +4,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const PlanetRouter = require('./helpers/create_router.js');
 const data = require('../db/planets.js');
+const port = process.env.PORT || 3000;
 
 const publicPath = path.join(__dirname, '../../client/public');
 
@@ -13,6 +14,6 @@ app.use(bodyParser.json());
 const planetRouter = new PlanetRouter(data);
 app.use('/api/exoplanets', planetRouter);
 
-app.listen(3000, function () {
+app.listen(port, function () {
   console.log('Started server');
 });
