@@ -28,6 +28,7 @@ Game.prototype.bindEvents = function () {
     console.log(this.cardsInPlay);
     this.winner = this.compareCards(this.cardsInPlay, formattedKey);
     PubSub.publish('Game:winner-determined', this.winner);
+    PubSub.publish('Game:winner-determined-category-detail', formattedKey);
     PubSub.publish("Game:reveal-both-cards", {});
     this.allowPlayerToChoose = false;
   }
@@ -82,6 +83,7 @@ Game.prototype.computerTurn = function () {
     PubSub.publish("Game:reveal-both-cards", {});
   }, 1500);
   PubSub.publish('Game:winner-determined', this.winner);
+  PubSub.publish('Game:winner-determined-category-detail', randomCategory);
 };
 
 Game.prototype.getCategories = function (object) {
