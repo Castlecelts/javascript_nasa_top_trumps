@@ -25,7 +25,7 @@ CardGridView.prototype.bindEvents = function () {
     PubSub.signForDelivery(this,event);
     const new_player = event.detail; // 1 or 2
     this.clearGrid();
-    PubSub.publish("Game:message", `Over to player ${new_player}`);
+    PubSub.publish("Game:message", `Player ${new_player} turn`);
     this.renderCards(this.currentMatchCards, new_player);
   });
 };
