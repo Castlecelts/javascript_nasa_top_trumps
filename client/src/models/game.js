@@ -23,16 +23,18 @@ Game.prototype.bindEvents = function () {
   });
 
   PubSub.subscribe('CardView:category-clicked', (event) => {
-    if (this.allowPlayerToChoose === true) {
-    const formattedKey = this.keyFormatter(event.detail);
-    console.log(this.cardsInPlay);
-    this.winner = this.compareCards(this.cardsInPlay, formattedKey);
-    PubSub.publish('Game:winner-determined', this.winner);
-    PubSub.publish('Game:winner-determined-category-detail', formattedKey);
-    PubSub.publish("Game:reveal-both-cards", {});
-    this.allowPlayerToChoose = false;
-  }
-  });
+     if (this.allowPlayerToChoose === true) {
+       const formattedKey = this.keyFormatter(event.detail);
+       this.winner = this.compareCards(this.cardsInPlay, formattedKey);
+       this.allowPlayerToChoose = false;
+       PubSub.publish('Game:message', `Player 1 has selected ${event.detail}`);
+       setTimeout(() => {
+         PubSub.publish('Game:message', ``);
+         PubSub.publish('Game:winner-determined', [this.winner, event.detail]);
+         PubSub.publish("Game:reveal-both-cards", {});
+       }, 2000)
+     }
+   });
 
   PubSub.subscribe('NextMatchButton:start-next-match', () => {
     this.deck.putCardsAtBackOfHands(this.winner);
@@ -74,16 +76,30 @@ Game.prototype.keyFormatter = function (label) {
  return keys[label];
 };
 
+Game.prototype.reverseKeyFormatter = function (label) {
+  const keys = {
+    "pl_orbsmax": "Distance",
+    "pl_orbper": "Orbit Period",
+    "pl_radj": "Radius",
+    "pl_bmassj": "Mass",
+    "pl_pnum": "Planets",
+  }
+  return keys[label];
+};
+
 Game.prototype.computerTurn = function () {
-  // debugger;
+  PubSub.publish('Game:message', "Player 2 selecting...");
   const categories = this.getCategories(this.cardsInPlay[0]);
   const randomCategory = this.randomCategory(categories);
   this.winner = this.compareCards(this.cardsInPlay, randomCategory);
-  setTimeout(function () {
+  setTimeout(() => {
+    PubSub.publish('Game:message', `Player 2 has selected ${this.reverseKeyFormatter(randomCategory)}`);
+  }, 2000)
+  setTimeout(() => {
+    PubSub.publish('Game:winner-determined', [this.winner, this.reverseKeyFormatter(randomCategory)]);
     PubSub.publish("Game:reveal-both-cards", {});
-  }, 1500);
-  PubSub.publish('Game:winner-determined', this.winner);
-  PubSub.publish('Game:winner-determined-category-detail', randomCategory);
+    PubSub.publish('Game:message', "");
+  }, 4000);
 };
 
 Game.prototype.getCategories = function (object) {
